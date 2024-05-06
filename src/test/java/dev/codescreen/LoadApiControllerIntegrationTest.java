@@ -37,7 +37,7 @@ class LoadApiControllerIntegrationTest {
         // Given
         LoadRequest request = new LoadRequest();
         request.setMessageId("123");
-        request.setUserId("user123");
+        request.setUserId("user1234");
         Amount amount = new Amount("100.00", "USD", DebitCredit.CREDIT);
         request.setTransactionAmount(amount);
 
@@ -54,7 +54,7 @@ class LoadApiControllerIntegrationTest {
         assertEquals(HttpStatus.CREATED, entity.getStatusCode());
         LoadResponse responseBody = entity.getBody();
         assertNotNull(responseBody);
-        assertEquals("user123", responseBody.getUserId());
+        assertEquals("user1234", responseBody.getUserId());
         assertEquals("123", responseBody.getMessageId());
         assertEquals("100.00", responseBody.getBalance().getAmount());
         assertEquals("USD", responseBody.getBalance().getCurrency());
@@ -74,7 +74,7 @@ class LoadApiControllerIntegrationTest {
         assertEquals(HttpStatus.CREATED, entity.getStatusCode());
         responseBody = entity.getBody();
         assertNotNull(responseBody);
-        assertEquals("user123", responseBody.getUserId());
+        assertEquals("user1234", responseBody.getUserId());
         assertEquals("123", responseBody.getMessageId());
         assertEquals(101.46, Double.parseDouble(responseBody.getBalance().getAmount()));
 
@@ -109,7 +109,7 @@ class LoadApiControllerIntegrationTest {
         // Given
         LoadRequest request = new LoadRequest();
         request.setMessageId("123");
-        request.setUserId("user123");
+        request.setUserId("user1234");
 
         Error error = new Error("Transaction amount is missing");
         error.setCode("400");
@@ -133,7 +133,7 @@ class LoadApiControllerIntegrationTest {
         // Given
         LoadRequest request = new LoadRequest();
         request.setTransactionAmount(new Amount("100.00", "USD", DebitCredit.CREDIT));
-        request.setUserId("user123");
+        request.setUserId("user1234");
 
         Error error = new Error("Message Id is missing");
         error.setCode("400");
@@ -169,7 +169,7 @@ class LoadApiControllerIntegrationTest {
         // Given
         LoadRequest request = new LoadRequest();
         request.setTransactionAmount(new Amount("", "USD", DebitCredit.CREDIT));
-        request.setUserId("user123");
+        request.setUserId("user12344");
         request.setMessageId("123");
 
         Error error = new Error("Amount is missing or not a valid number");
@@ -206,7 +206,7 @@ class LoadApiControllerIntegrationTest {
         // Given
         LoadRequest request = new LoadRequest();
         request.setTransactionAmount(new Amount("100", "", DebitCredit.CREDIT));
-        request.setUserId("user123");
+        request.setUserId("user1234");
         request.setMessageId("123");
 
         Error error = new Error("Currency is missing");
