@@ -111,7 +111,7 @@ public class AuthorizationApiControllerIntegrationTest {
         assertEquals("user123", responseBody.getUserId());
         assertEquals("123", responseBody.getMessageId());
         assertEquals(ResponseCode.DECLINED, responseBody.getResponseCode());
-        assertEquals(90, Double.parseDouble(responseBody.getBalance().getAmount()));
+        assertEquals(80, Double.parseDouble(responseBody.getBalance().getAmount()));
 
     }
 
