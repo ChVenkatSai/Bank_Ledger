@@ -15,7 +15,7 @@ The service accepts two types of transactions:
 
 2) Authorizations: Conditionally remove money from a user (debit)
 
-Every load or authorization PUT should return the updated balance following the transaction. Authorization declines should be saved, even if they do not impact balance calculation.
+Every load or authorization PUT should return the updated transactionAmount following the transaction. Authorization declines should be saved, even if they do not impact transactionAmount calculation.
 
 
 Implement the event sourcing pattern to record all banking transactions as immutable events. Each event should capture relevant information such as transaction type, amount, timestamp, and account identifier.
@@ -43,17 +43,20 @@ Here’s a breakdown of the key criteria we’ll be considering when grading you
 
 # Candidate README
 ## Bootstrap instructions
-*Replace this: To run this server locally, do the following:*
+To run this server locally, clone the repository and build the maven pom.xml file
+to load dependencies. Then launch the server locally and curl to the port 8080 following
+the schema. 
 
 ## Design considerations
-*Replace this: I decided to build X for Y reasons.*
+I decided to have an array to store the transactions because we need a serial order of transactions stored. 
 
 ## Assumptions
-*Replace this: If you made any assumption in designing the service, document it here*
+I assumed that the amount is given in such way that the balance amount never goes above the maximum limit of double. This can be easily overcome by performing 
+string additions rather than double additions. 
 
 ## Bonus: Deployment considerations
-*Replace this: If I were to deploy this, I would host it in this way with these technologies.*
-
+If I were to deploy this, I would first create a docker image of the application. Then, I would deploy it over EC2 instances 
+with loadbalancers in place. Having used in memory database, there's no need to set up an external database. 
 ## License
 
 At CodeScreen, we strongly value the integrity and privacy of our assessments. As a result, this repository is under exclusive copyright, which means you **do not** have permission to share your solution to this test publicly (i.e., inside a public GitHub/GitLab repo, on Reddit, etc.). <br>

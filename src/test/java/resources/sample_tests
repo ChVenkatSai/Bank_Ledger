@@ -1,4 +1,4 @@
-action,msgId, userId,debitOrCredit,responseCode,balance
+action,msgId, userId,debitOrCredit,responseCode,transactionAmount
 LOAD,1,1,CREDIT,100,APPROVED,100.00
 LOAD,2,1,CREDIT,3.23,APPROVED,103.23
 AUTHORIZATION,3,1,DEBIT,100,APPROVED,3.23
