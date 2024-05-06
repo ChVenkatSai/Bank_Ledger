@@ -75,7 +75,7 @@ public class AuthorizationApiControllerIntegrationTest {
                 new HttpEntity<>(request),
                 LoadResponse.class
         );
-        amount.setAmount("10.0");
+        amount.setAmount("20.0");
         request.setTransactionAmount(amount);
 
         entity = restTemplate.exchange(
@@ -92,7 +92,7 @@ public class AuthorizationApiControllerIntegrationTest {
         assertEquals("user123", responseBody.getUserId());
         assertEquals("123", responseBody.getMessageId());
         assertEquals(ResponseCode.APPROVED, responseBody.getResponseCode());
-        assertEquals(90, Double.parseDouble(responseBody.getBalance().getAmount()));
+        assertEquals(80, Double.parseDouble(responseBody.getBalance().getAmount()));
 
         amount.setAmount("1000.0");
         request.setTransactionAmount(amount);
