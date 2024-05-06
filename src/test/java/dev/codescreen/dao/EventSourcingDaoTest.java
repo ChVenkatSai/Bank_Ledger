@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.verify;
 class EventSourcingDaoTest {
 
     @Mock
-    private ArrayList<Transaction> mockDB;
+    private LinkedList<Transaction> mockDB;
     private EventSourcingDao underTest;
 
     @BeforeEach
@@ -36,7 +37,7 @@ class EventSourcingDaoTest {
     void CanAddTransaction() {
         //given
         Amount amount = new Amount("100.23", "USD", DebitCredit.CREDIT);
-        Transaction transaction = new Transaction(amount, "2226e2f9-ih09-46a8-958f-d659880asdfD", "55210c62-e480-asdf-bc1b-e991ac67FSAC", "Load Transaction", LocalDateTime.now());
+        Transaction transaction = new Transaction(amount, "2226e2f9-ih09-46a8-958f-d659880asdfD", "55210c62-e480-asdf-bc1b-e991ac67FSAC", DebitCredit.CREDIT, LocalDateTime.now());
         //when
         int result = underTest.addTransaction(transaction);
         //then

@@ -94,6 +94,25 @@ public class AuthorizationApiControllerIntegrationTest {
         assertEquals(ResponseCode.APPROVED, responseBody.getResponseCode());
         assertEquals(90, Double.parseDouble(responseBody.getBalance().getAmount()));
 
+        amount.setAmount("1000.0");
+        request.setTransactionAmount(amount);
+
+        entity = restTemplate.exchange(
+                baseUrl.concat(":8080") + "/authorization",
+                HttpMethod.PUT,
+                new HttpEntity<>(request),
+                AuthorizationResponse.class
+        );
+
+        // Then
+        assertEquals(HttpStatus.CREATED, entity.getStatusCode());
+        responseBody = entity.getBody();
+        assertNotNull(responseBody);
+        assertEquals("user123", responseBody.getUserId());
+        assertEquals("123", responseBody.getMessageId());
+        assertEquals(ResponseCode.DECLINED, responseBody.getResponseCode());
+        assertEquals(90, Double.parseDouble(responseBody.getBalance().getAmount()));
+
     }
 
     @Test

@@ -11,10 +11,9 @@
     </parent>
     <groupId>dev.codescreen</groupId>
     <artifactId>CodeScreen_xcvmim6z</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <properties>
-        <java.version>22</java.version>
         <junit.version>4.12</junit.version>
         <jacoco.version>0.8.4</jacoco.version>
         <guava.version>28.0-jre</guava.version>

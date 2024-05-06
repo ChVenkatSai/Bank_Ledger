@@ -2,10 +2,7 @@ package dev.codescreen.service;
 
 import dev.codescreen.dao.EventSourcing;
 import dev.codescreen.dao.UserBalance;
-import dev.codescreen.model.Amount;
-import dev.codescreen.model.LoadRequest;
-import dev.codescreen.model.LoadResponse;
-import dev.codescreen.model.Transaction;
+import dev.codescreen.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +44,7 @@ public class LoadServiceImpl implements LoadService {
         transaction.setTransactionAmount(updatedBalance);
         transaction.setMessageId(this.loadRequest.getMessageId());
         transaction.setUserId(this.loadRequest.getUserId());
-        transaction.setTransactionType("Load Transaction");
+        transaction.setTransactionType(DebitCredit.CREDIT);
         transaction.setTimestamp(LocalDateTime.now());
         LoadResponse loadResponse = new LoadResponse();
         eventSourcing.addTransaction(transaction);

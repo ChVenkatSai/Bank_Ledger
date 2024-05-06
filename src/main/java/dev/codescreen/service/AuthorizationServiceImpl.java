@@ -54,7 +54,7 @@ public class AuthorizationServiceImpl implements AuthorizationService{
         transaction.setTransactionAmount(updatedBalance);
         transaction.setMessageId(this.authorizationRequest.getMessageId());
         transaction.setUserId(this.authorizationRequest.getUserId());
-        transaction.setTransactionType("Authorization Transaction");
+        transaction.setTransactionType(DebitCredit.DEBIT);
         transaction.setTimestamp(LocalDateTime.now());
         eventSourcing.addTransaction(transaction);
         authorizationResponse.setUserId(this.authorizationRequest.getUserId());

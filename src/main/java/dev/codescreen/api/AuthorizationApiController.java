@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 
 
@@ -18,7 +19,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-@Controller
+@RestController
 @RequestMapping("${openapi.transactionService.base-path:}")
 public class AuthorizationApiController implements AuthorizationApi {
 

@@ -15,12 +15,12 @@ public class Transaction {
     private Amount amount;
     private String userId;
     private String messageId;
-    private String transactionType;
+    private DebitCredit transactionType;
     private LocalDateTime timestamp; // Add timestamp field
 
     public Transaction(){super();}
     // Constructor with all fields including timestamp
-    public Transaction(Amount amount, String userId, String messageId, String transactionType, LocalDateTime timestamp) {
+    public Transaction(Amount amount, String userId, String messageId, DebitCredit transactionType, LocalDateTime timestamp) {
         this.amount = amount;
         this.userId = userId;
         this.messageId = messageId;
@@ -76,14 +76,14 @@ public class Transaction {
         this.amount = amount;
     }
 
-    @NotNull @Size(min = 1)
+
     @Schema(name = "transactionType", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("transactionType")
-    public String getTransactionType() {
+    public DebitCredit getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(String transactionType) {
+    public void setTransactionType(DebitCredit transactionType) {
         this.transactionType= transactionType;
     }
 
