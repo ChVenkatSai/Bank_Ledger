@@ -16,6 +16,9 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+First Integration Test - for mainly authorization. 
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthorizationApiControllerIntegrationTest {
 
@@ -31,9 +34,9 @@ public class AuthorizationApiControllerIntegrationTest {
         restTemplate = new RestTemplate();
     }
 
-
+    //Successful Authorization
     @Test
-    void testLoadPut_Success() throws Exception {
+    void testAuthorizationPut_Success() throws Exception {
         // Given
         AuthorizationRequest request = new AuthorizationRequest();
         request.setMessageId("123");
@@ -41,7 +44,7 @@ public class AuthorizationApiControllerIntegrationTest {
         Amount amount = new Amount("100.00", "USD", DebitCredit.CREDIT);
         request.setTransactionAmount(amount);
 
-        //when(loadService.getResponse()).thenReturn(response);
+        //when there is account to debit from
 
         ResponseEntity<AuthorizationResponse> entity = restTemplate.exchange(
                 baseUrl.concat(":8080") + "/authorization",
@@ -60,6 +63,7 @@ public class AuthorizationApiControllerIntegrationTest {
         assertEquals(" ", responseBody.getBalance().getAmount());
         assertEquals(" ", responseBody.getBalance().getCurrency());
 
+        //Creating an account
         // When/Then
         LoadRequest loadRequest = new LoadRequest();
         request.setMessageId("123");
@@ -67,7 +71,7 @@ public class AuthorizationApiControllerIntegrationTest {
         Amount amount1 = new Amount("100.00", "USD", DebitCredit.CREDIT);
         request.setTransactionAmount(amount);
 
-        //when(loadService.getResponse()).thenReturn(response);
+        //Debiting from an account within limit
 
         ResponseEntity<LoadResponse> entity1 = restTemplate.exchange(
                 baseUrl.concat(":8080") + "/load",
@@ -93,8 +97,10 @@ public class AuthorizationApiControllerIntegrationTest {
         assertEquals("123", responseBody.getMessageId());
         assertEquals(ResponseCode.APPROVED, responseBody.getResponseCode());
         assertEquals(80, Double.parseDouble(responseBody.getBalance().getAmount()));
-
-        amount.setAmount("1000.0");
+    
+        //Debiting more than the account's balance
+        
+        amount.setAmount("80.01");
         request.setTransactionAmount(amount);
 
         entity = restTemplate.exchange(
@@ -113,10 +119,32 @@ public class AuthorizationApiControllerIntegrationTest {
         assertEquals(ResponseCode.DECLINED, responseBody.getResponseCode());
         assertEquals(80, Double.parseDouble(responseBody.getBalance().getAmount()));
 
+        //Edge case, debiting the exact balance.
+
+        amount.setAmount("80.0");
+        request.setTransactionAmount(amount);
+
+        entity = restTemplate.exchange(
+                baseUrl.concat(":8080") + "/authorization",
+                HttpMethod.PUT,
+                new HttpEntity<>(request),
+                AuthorizationResponse.class
+        );
+
+        // Then
+        assertEquals(HttpStatus.CREATED, entity.getStatusCode());
+        responseBody = entity.getBody();
+        assertNotNull(responseBody);
+        assertEquals("user123", responseBody.getUserId());
+        assertEquals("123", responseBody.getMessageId());
+        assertEquals(ResponseCode.APPROVED, responseBody.getResponseCode());
+        assertEquals(0, Double.parseDouble(responseBody.getBalance().getAmount()));
+
     }
 
+    //Failure CASES similar to the unit test. 
     @Test
-    void testLoadPut_MissingUserId() throws Exception {
+    void testAuthorizationPut_MissingUserId() throws Exception {
         // Given
         AuthorizationRequest request = new AuthorizationRequest();
         request.setMessageId("123");
@@ -133,14 +161,13 @@ public class AuthorizationApiControllerIntegrationTest {
                     dev.codescreen.model.Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(dev.codescreen.model.Error.class).equals(error));        }
 
     }
 
     @Test
-    void testLoadPut_MissingTransactionAmount() throws Exception {
+    void testAuthorizationPut_MissingTransactionAmount() throws Exception {
         // Given
         AuthorizationRequest request = new AuthorizationRequest();
         request.setMessageId("123");
@@ -157,14 +184,13 @@ public class AuthorizationApiControllerIntegrationTest {
                     dev.codescreen.model.Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(dev.codescreen.model.Error.class).equals(error));
         }
     }
 
     @Test
-    void testLoadPut_MissingMessage() throws Exception {
+    void testAuthorizationPut_MissingMessage() throws Exception {
         // Given
         AuthorizationRequest request = new AuthorizationRequest();
         request.setTransactionAmount(new Amount("100.00", "USD", DebitCredit.CREDIT));
@@ -194,16 +220,16 @@ public class AuthorizationApiControllerIntegrationTest {
                     dev.codescreen.model.Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(dev.codescreen.model.Error.class).equals(error));        }
     }
 
+    //Debiting negative amount
     @Test
-    void testLoadPut_MissingAmount() throws Exception {
+    void testAuthorizationPut_MissingAmount() throws Exception {
         // Given
         AuthorizationRequest request = new AuthorizationRequest();
-        request.setTransactionAmount(new Amount("", "USD", DebitCredit.CREDIT));
+        request.setTransactionAmount(new Amount("-20.0", "USD", DebitCredit.CREDIT));
         request.setUserId("user123");
         request.setMessageId("123");
 
@@ -231,13 +257,12 @@ public class AuthorizationApiControllerIntegrationTest {
                     dev.codescreen.model.Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(dev.codescreen.model.Error.class).equals(error));        }
     }
 
     @Test
-    void testLoadPut_MissingCurrency() throws Exception {
+    void testAuthorizationPut_MissingCurrency() throws Exception {
         // Given
         AuthorizationRequest request = new AuthorizationRequest();
         request.setTransactionAmount(new Amount("100", "", DebitCredit.CREDIT));
@@ -270,12 +295,10 @@ public class AuthorizationApiControllerIntegrationTest {
                     dev.codescreen.model.Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));
         }
     }
 
-// Add more test methods for other scenarios like additional unexpected fields, etc.
 
 }

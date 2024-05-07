@@ -17,6 +17,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/*
+Unit Test for Authorization Service.
+ */
 @ExtendWith(MockitoExtension.class)
 class LoadServiceImplTest {
 
@@ -36,6 +39,7 @@ class LoadServiceImplTest {
         loadService = new LoadServiceImpl(mockLoadRequest, mockUserBalance, mockEventSourcing);
     }
 
+    //Testing when user exists
     @Test
     void testGetResponse() {
         // Given
@@ -69,6 +73,7 @@ class LoadServiceImplTest {
         assertEquals(mockLoadRequest, loadService.getLoadRequest());
     }
 
+    //Testing with No user
     @Test
     void testGetResponseNoUser(){
         // Given

@@ -55,28 +55,43 @@ public class LoadApiController implements LoadApi {
 
     @Override
     public ResponseEntity<?> loadPut(@Valid @RequestBody LoadRequest loadRequest) {
+
+        //Handling cases that don't match schema, i.e BAD requests
+
         Error error = new Error();
+        //No messageId
         if (loadRequest.getMessageId() == null || loadRequest.getMessageId().isEmpty()){
             error.setMessage("Message Id is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (loadRequest.getTransactionAmount() == null) {
+        }
+        //No transaction amount
+        else if (loadRequest.getTransactionAmount() == null) {
             error.setMessage("Transaction amount is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (loadRequest.getUserId() == null || loadRequest.getUserId().isEmpty()) {
+        }
+        //No userId
+        else if (loadRequest.getUserId() == null || loadRequest.getUserId().isEmpty()) {
             error.setMessage("User Id is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (!isValidAmount(loadRequest.getTransactionAmount().getAmount())) {
+        }
+        //No amount or invalid amount
+        else if (!isValidAmount(loadRequest.getTransactionAmount().getAmount())) {
             error.setMessage("Amount is missing or not a valid number");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (loadRequest.getTransactionAmount().getCurrency() == null || loadRequest.getTransactionAmount().getCurrency().isEmpty()) {
+        }
+        //No currency
+        else if (loadRequest.getTransactionAmount().getCurrency() == null || loadRequest.getTransactionAmount().getCurrency().isEmpty()) {
             error.setMessage("Currency is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
+
+        //Sending Response obtained from the service.
+
         try {
             loadService.setLoadRequest(loadRequest);
             LoadResponse loadResponse = loadService.getResponse();
@@ -86,7 +101,6 @@ public class LoadApiController implements LoadApi {
         } catch (Exception e){
             error.setMessage("Internal server error");
             error.setCode("500");
-            //error.setCode(e.getStatusCode().toString());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }

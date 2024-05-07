@@ -76,7 +76,10 @@ public class Transaction {
         this.amount = amount;
     }
 
-
+    /**
+     * Get transactionType
+     * @return transactionType
+     */
     @Schema(name = "transactionType", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty("transactionType")
     public DebitCredit getTransactionType() {

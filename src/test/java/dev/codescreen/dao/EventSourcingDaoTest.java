@@ -20,6 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+/*
+Unit test for Event Sourcing DAO
+ */
 @ExtendWith(MockitoExtension.class)
 class EventSourcingDaoTest {
 
@@ -33,6 +36,7 @@ class EventSourcingDaoTest {
         underTest.setDB(mockDB);
     }
 
+    //Add a transaction.
     @Test
     void CanAddTransaction() {
         //given

@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/*
+Unit Test for Authorization Service.
+ */
 @ExtendWith(MockitoExtension.class)
 class AuthorizationServiceImplTest {
 
@@ -34,6 +37,7 @@ class AuthorizationServiceImplTest {
         authorizationService = new AuthorizationServiceImpl(mockAuthorizationRequest, mockUserBalance, mockEventSourcing);
     }
 
+    //Testing for an approved response
     @Test
     void testGetResponse_Approved() {
         // Given
@@ -62,6 +66,7 @@ class AuthorizationServiceImplTest {
         verify(mockEventSourcing).addTransaction(any(Transaction.class));
     }
 
+    //Testing for a declined Response
     @Test
     void testGetResponse_Declined() {
         // Given

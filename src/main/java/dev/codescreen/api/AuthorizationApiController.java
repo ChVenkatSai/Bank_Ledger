@@ -50,38 +50,51 @@ public class AuthorizationApiController implements AuthorizationApi {
 
     @Override
     public ResponseEntity<?> authorizationPut(AuthorizationRequest authorizationRequest) {
+
+        //Handling cases that don't match schema i.e Bad Requests
         Error error = new Error();
+        //No messageId
         if (authorizationRequest.getMessageId() == null || authorizationRequest.getMessageId().isEmpty()){
             error.setMessage("Message Id is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (authorizationRequest.getTransactionAmount() == null) {
+        }
+        //No Transaction Amount
+        else if (authorizationRequest.getTransactionAmount() == null) {
             error.setMessage("Transaction amount is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (authorizationRequest.getUserId() == null || authorizationRequest.getUserId().isEmpty()) {
+        }
+        // No userId
+        else if (authorizationRequest.getUserId() == null || authorizationRequest.getUserId().isEmpty()) {
             error.setMessage("User Id is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (!isValidAmount(authorizationRequest.getTransactionAmount().getAmount())) {
+        }
+        //No amount or invalid amount
+        else if (!isValidAmount(authorizationRequest.getTransactionAmount().getAmount())) {
             error.setMessage("Amount is missing or not a valid number");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        } else if (authorizationRequest.getTransactionAmount().getCurrency() == null || authorizationRequest.getTransactionAmount().getCurrency().isEmpty()) {
+        }
+        //No currency
+        else if (authorizationRequest.getTransactionAmount().getCurrency() == null || authorizationRequest.getTransactionAmount().getCurrency().isEmpty()) {
             error.setMessage("Currency is missing");
             error.setCode("400");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
+
+        //Sending response obtained from Service.
+
         try {
             authorizationService.setAuthorizationRequest(authorizationRequest);
             AuthorizationResponse authorizationResponse = authorizationService.getResponse();
             return ResponseEntity
-                    .created(URI.create("/load")) // Set the URI of the newly created resource
+                    .created(URI.create("/authorization")) // Set the URI of the newly created resource
                     .body(authorizationResponse);
         } catch (Exception e){
             error.setMessage("Internal server error");
             error.setCode("500");
-            //error.setCode(e.getStatusCode().toString());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }

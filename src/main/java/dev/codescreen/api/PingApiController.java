@@ -45,12 +45,14 @@ public class PingApiController implements PingApi {
 
     @Override
     public ResponseEntity<Ping> pingGet(){
+
+        //Print Ping and convey the server is active
         Ping p = new Ping(OffsetDateTime.now());
         System.out.println(("The time would be " + p.getServerTime()));
         getRequest().ifPresent(request -> {
             System.out.println("The request is" + request.toString());
-
         });
+
         return ResponseEntity.ok(p);
     }
 

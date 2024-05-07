@@ -6,8 +6,16 @@ import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+Unit test
+Given that models only contain standard getter, setter, Printer and Equality methods
+We only need to test the equality method. The Print methods are used for debugging and
+Setter and Getter are standard.
+ */
+
 class GeneralTest {
 
+    //Test Authorization Requests and Responses
     @Test
     void testEquals_Authorization() {
 
@@ -66,6 +74,7 @@ class GeneralTest {
         assertFalse(response1.equals(response3), "AuthorizationResponse objects should not be equal");
     }
 
+    //Test Error
     @Test
     public void testEquals_Error(){
         Error error1 = new Error();
@@ -87,6 +96,7 @@ class GeneralTest {
 
 }
 
+    //Test Load Request and responses.
     @Test
     void testEquals_Load() {
         // Test for equal LoadRequest objects
@@ -138,6 +148,7 @@ class GeneralTest {
         assertFalse(response1.equals(response3), "LoadResponse objects should not be equal");
     }
 
+    //Test Ping
     @Test
     void testEquals_Ping() {
         // Test for equal Ping objects

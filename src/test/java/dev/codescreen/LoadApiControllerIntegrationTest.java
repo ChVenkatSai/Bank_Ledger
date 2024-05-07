@@ -16,6 +16,9 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+Second Integration Test to test mainly load
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class LoadApiControllerIntegrationTest {
 
@@ -31,7 +34,7 @@ class LoadApiControllerIntegrationTest {
         restTemplate = new RestTemplate();
     }
 
-
+    //Successful Loading
     @Test
     void testLoadPut_Success() throws Exception {
         // Given
@@ -41,7 +44,7 @@ class LoadApiControllerIntegrationTest {
         Amount amount = new Amount("100.00", "USD", DebitCredit.CREDIT);
         request.setTransactionAmount(amount);
 
-        //when(loadService.getResponse()).thenReturn(response);
+        //Load when there's no user
 
         ResponseEntity<LoadResponse> entity = restTemplate.exchange(
                 baseUrl.concat(":8080") + "/load",
@@ -59,6 +62,7 @@ class LoadApiControllerIntegrationTest {
         assertEquals("100.00", responseBody.getBalance().getAmount());
         assertEquals("USD", responseBody.getBalance().getCurrency());
 
+        //Load when an account exists.
         // When/Then
         amount.setAmount("1.46");
         request.setTransactionAmount(amount);
@@ -98,7 +102,6 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));        }
 
@@ -122,7 +125,6 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));
         }
@@ -146,7 +148,6 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));        }
 
@@ -159,11 +160,11 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));        }
     }
 
+    //Failure CASES similar to the unit test.
     @Test
     void testLoadPut_MissingAmount() throws Exception {
         // Given
@@ -183,7 +184,6 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));        }
 
@@ -196,7 +196,6 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));        }
     }
@@ -220,7 +219,6 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));
         }
@@ -235,12 +233,10 @@ class LoadApiControllerIntegrationTest {
                     Error.class
             );
         } catch (HttpClientErrorException ex) {
-            // Handle HttpClientErrorException (e.g., HTTP status code 4xx)
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
             assertTrue(ex.getResponseBodyAs(Error.class).equals(error));
         }
     }
 
-// Add more test methods for other scenarios like additional unexpected fields, etc.
 
 }

@@ -43,20 +43,56 @@ Here’s a breakdown of the key criteria we’ll be considering when grading you
 
 # Candidate README
 ## Bootstrap instructions
-To run this server locally, clone the repository and build the maven pom.xml file
-to load dependencies. Then launch the server locally and curl to the port 8080 following
-the schema. 
+To run this server locally, clone the repository.
+
+git clone <repository_url>
+
+Navigate to the project directory and build the maven pom.xml file
+
+mvn clean package
+
+Run the application locally
+
+mvn spring-boot:run
+
+Curl to port 8080 with the respective schema or use Postman.  
 
 ## Design considerations
-I decided to have an array to store the transactions because we need a serial order of transactions stored. 
+I decided to have a linked list to store the transactions because we need
+a serial order of transactions stored such that it is immutable and auditable. I 
+decided to have a simple hashmap to store user balances to ensure fast access (O(1)).
+The following is the design of the application:
+
+![Alt text](um.PNG)
 
 ## Assumptions
 I assumed that the amount is given in such way that the balance amount never goes above the maximum limit of double. This can be easily overcome by performing 
-string additions rather than double additions. 
+string additions rather than double additions or having types that can store larger numbers. 
+I've performed basic error handling in the requests but for intricate cases such as only allowing
+valid currency, we need more logic. 
 
 ## Bonus: Deployment considerations
-If I were to deploy this, I would first create a docker image of the application. Then, I would deploy it over EC2 instances 
-with loadbalancers in place. Having used in memory database, there's no need to set up an external database. 
+To deploy the application on for instance, let's say AWS, 
+
+EC2 Instances: Provision EC2 instances to host our application, ensuring that we select 
+appropriate instance types and configure security groups to allow HTTP traffic.
+
+VPC Configuration: Set up a Virtual Private Cloud (VPC) to define our network
+environment, including security groups for controlling inbound and outbound traffic.
+
+Database Consideration: Although we're using in-built data structures like hashmap
+or linked list, we need to ensure that the state of the database objects remains clean 
+and consistent across instances. One approach to would be to implement RDS.
+
+Application Deployment: Package our application into a JAR file and deploy it 
+to EC2 instances using SSH. 
+
+Load Balancing: Configure an Elastic Load Balancer (ELB) to distribute 
+incoming traffic across multiple EC2 instances, ensuring scalability and high availability.
+
+Monitoring with CloudWatch: Monitor our EC2 instances, load balancers, and
+other AWS resources using Amazon CloudWatch to detect and troubleshoot issues. Alerts can
+be configured accordingly.
 ## License
 
 At CodeScreen, we strongly value the integrity and privacy of our assessments. As a result, this repository is under exclusive copyright, which means you **do not** have permission to share your solution to this test publicly (i.e., inside a public GitHub/GitLab repo, on Reddit, etc.). <br>

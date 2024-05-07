@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/*
+Unit Test for User Balance DAO
+ */
 @ExtendWith(MockitoExtension.class)
 class UserBalanceDaoTest {
 
@@ -28,6 +31,7 @@ class UserBalanceDaoTest {
         underTest = new UserBalanceDao(mockDB);
     }
 
+    //Test Update Balance
     @Test
     void canUpdateBalance() {
         //given
@@ -47,6 +51,7 @@ class UserBalanceDaoTest {
         assertEquals(amount, amountCaptor.getValue());
     }
 
+    //Test Get Balance
     @Test
     void getBalance() {
         //Given
