@@ -52,7 +52,7 @@ Curl to port 8080 with the respective schema or use Postman.
 
 ## Design considerations
 I decided to have a linked list to store the transactions because we need
-a serial order of transactions stored such that it is immutable and auditable. I 
+a serial order of transactions stored such that they are immutable and auditable. I 
 decided to have a simple hashmap to store user balances to ensure fast access (O(1)).
 I decide to have interfaces allowing to switch between future implementations. (For example a database)
 The following is the design of the application:
@@ -60,10 +60,11 @@ The following is the design of the application:
 ![Alt text](um.PNG)
 
 ## Assumptions
-I assumed that the amount is given in such way that the balance amount never goes above the maximum limit of double.
+I assumed that the amount is given in such a way that the balance amount never goes above the maximum limit of double.
 Working with double may introduce slight errors in calculation but this should not affect the results
 as the errors are generally in later places of decimals. We can bypass double implementation by performing 
-string additions rather than double additions or having types that can store larger numbers. 
+string additions rather than double additions or having types that can store larger numbers. Again these
+implementations inject problems of their own. 
 I've performed basic error handling in the requests but for intricate cases such as only allowing
 valid currency, we need more logic. I'm assuming I don't need to bother about these cases for now. 
 I'm also assuming I don't need to handle concurrency for now. 
@@ -79,7 +80,7 @@ environment, including security groups for controlling inbound and outbound traf
 
 Database Consideration: Although we're using in-built data structures like hashmap
 or linked list, we need to ensure that the state of the database objects remains clean 
-and consistent across instances. One approach to would be to implement RDS.
+and consistent across instances. One approach would be to implement RDS.
 
 Application Deployment: Package our application into a JAR file and deploy it 
 to EC2 instances using SSH. 
