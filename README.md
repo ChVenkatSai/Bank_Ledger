@@ -44,14 +44,7 @@ Here’s a breakdown of the key criteria we’ll be considering when grading you
 # Candidate README
 ## Bootstrap instructions
 To run this server locally, clone the repository.
-
-git clone <repository_url>
-
-Navigate to the project directory and build the maven pom.xml file
-
-mvn clean package
-
-Run the application locally
+Navigate to the project directory and run the application with the command
 
 mvn spring-boot:run
 
@@ -61,15 +54,19 @@ Curl to port 8080 with the respective schema or use Postman.
 I decided to have a linked list to store the transactions because we need
 a serial order of transactions stored such that it is immutable and auditable. I 
 decided to have a simple hashmap to store user balances to ensure fast access (O(1)).
+I decide to have interfaces allowing to switch between future implementations. (For example a database)
 The following is the design of the application:
 
 ![Alt text](um.PNG)
 
 ## Assumptions
-I assumed that the amount is given in such way that the balance amount never goes above the maximum limit of double. This can be easily overcome by performing 
+I assumed that the amount is given in such way that the balance amount never goes above the maximum limit of double.
+Working with double may introduce slight errors in calculation but this should not affect the results
+as the errors are generally in later places of decimals. We can bypass double implementation by performing 
 string additions rather than double additions or having types that can store larger numbers. 
 I've performed basic error handling in the requests but for intricate cases such as only allowing
-valid currency, we need more logic. 
+valid currency, we need more logic. I'm assuming I don't need to bother about these cases for now. 
+I'm also assuming I don't need to handle concurrency for now. 
 
 ## Bonus: Deployment considerations
 To deploy the application on for instance, let's say AWS, 
@@ -89,6 +86,7 @@ to EC2 instances using SSH.
 
 Load Balancing: Configure an Elastic Load Balancer (ELB) to distribute 
 incoming traffic across multiple EC2 instances, ensuring scalability and high availability.
+Setup health check ups for the same. 
 
 Monitoring with CloudWatch: Monitor our EC2 instances, load balancers, and
 other AWS resources using Amazon CloudWatch to detect and troubleshoot issues. Alerts can
