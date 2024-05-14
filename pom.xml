@@ -10,7 +10,7 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.codescreen</groupId>
-    <artifactId>CodeScreen_xcvmim6z</artifactId>
+    <artifactId>Bank_Ledger</artifactId>
     <version>1.0.0</version>
 
     <properties>
