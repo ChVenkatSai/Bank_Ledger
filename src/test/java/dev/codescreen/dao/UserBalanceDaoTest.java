@@ -1,69 +1,59 @@
 package dev.codescreen.dao;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import dev.codescreen.model.Amount;
 import dev.codescreen.model.DebitCredit;
-import dev.codescreen.model.Transaction;
+import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+public class UserBalanceDaoTest {
 
-/*
-Unit Test for User Balance DAO
- */
-@ExtendWith(MockitoExtension.class)
-class UserBalanceDaoTest {
-
-    @Mock
-    private HashMap<String, Amount> mockDB;
-    private UserBalanceDao underTest;
+    private MongoDatabase mockDatabase;
+    private MongoCollection<Document> mockCollection;
+    private UserBalanceDao userBalanceDao;
+    private FindIterable<Document> mockFindIterable;
 
     @BeforeEach
-    void setUp() {
-        underTest = new UserBalanceDao(mockDB);
+    public void setUp() {
+        mockDatabase = mock(MongoDatabase.class);
+        mockCollection = mock(MongoCollection.class);
+        mockFindIterable = mock(FindIterable.class);
+
+        when(mockDatabase.getCollection("Balance")).thenReturn(mockCollection);
+
+        userBalanceDao = new UserBalanceDao(mockDatabase);
     }
 
-    //Test Update Balance
     @Test
-    void canUpdateBalance() {
-        //given
-        Amount amount = new Amount("100.23", "USD", DebitCredit.CREDIT);
-        String userId = "2226e2f9-ih09-46a8-958f-d659880asdfD";
+    public void testUpdateBalance_InsertNewUser() {
+        Amount amount = new Amount();
+        amount.setAmount("100");
+        amount.setCurrency("USD");
+        amount.setDebitOrCredit(DebitCredit.CREDIT);
 
-        // When
-        underTest.updateBalance(userId, amount);
+        Document queryDocument = new Document("_id", "user123");
+        when(mockCollection.find(queryDocument)).thenReturn(mockFindIterable);
+        when(mockFindIterable.first()).thenReturn(null);
 
-        //then
-        ArgumentCaptor<String> userIdCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Amount> amountCaptor = ArgumentCaptor.forClass(Amount.class);
-        verify(mockDB).put(userIdCaptor.capture(), amountCaptor.capture());
+        userBalanceDao.updateBalance("user123", amount);
 
-        // Verify the captured arguments
-        assertEquals(userId, userIdCaptor.getValue());
-        assertEquals(amount, amountCaptor.getValue());
+        ArgumentCaptor<Document> documentCaptor = ArgumentCaptor.forClass(Document.class);
+        verify(mockCollection).insertOne(documentCaptor.capture());
+        Document capturedDocument = documentCaptor.getValue();
+
+        assertEquals("user123", capturedDocument.getString("_id"));
+        assertEquals("100", capturedDocument.getString("amount"));
+        assertEquals("USD", capturedDocument.getString("currency"));
+        assertEquals(DebitCredit.CREDIT, capturedDocument.get("debitOrCredit"));
     }
 
-    //Test Get Balance
-    @Test
-    void getBalance() {
-        //Given
-        Amount expectedAmount = new Amount("100.23", "Dollar", DebitCredit.CREDIT);
-        String userId = "2226e2f9-ih09-46a8-958f-d659880asdfD";
 
-        when(mockDB.get(userId)).thenReturn(expectedAmount);
-
-        // When
-        Amount actualAmount = underTest.getBalance(userId);
-
-        // Then
-        assertEquals(expectedAmount, actualAmount);
-    }
 }

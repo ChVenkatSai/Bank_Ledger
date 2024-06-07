@@ -71,6 +71,21 @@
             <version>2.1.1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-core -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-core</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
+
         <!-- JSR 303 - Bean Validation API -->
         <dependency>
             <groupId>jakarta.validation</groupId>

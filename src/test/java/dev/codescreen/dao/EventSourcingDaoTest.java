@@ -1,55 +1,61 @@
 package dev.codescreen.dao;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import dev.codescreen.model.Amount;
 import dev.codescreen.model.DebitCredit;
 import dev.codescreen.model.Transaction;
+import org.bson.Document;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-/*
-Unit test for Event Sourcing DAO
- */
-@ExtendWith(MockitoExtension.class)
-class EventSourcingDaoTest {
+public class EventSourcingDaoTest {
 
-    @Mock
-    private LinkedList<Transaction> mockDB;
-    private EventSourcingDao underTest;
+    private MongoDatabase mockDatabase;
+    private MongoCollection<Document> mockCollection;
+    private EventSourcingDao eventSourcingDao;
 
     @BeforeEach
-    void setUp(){
-        underTest = new EventSourcingDao();
-        underTest.setDB(mockDB);
+    public void setUp() {
+        mockDatabase = mock(MongoDatabase.class);
+        mockCollection = mock(MongoCollection.class);
+        when(mockDatabase.getCollection("Transactions")).thenReturn(mockCollection);
+
+        eventSourcingDao = new EventSourcingDao(mockDatabase);
     }
 
-    //Add a transaction.
     @Test
-    void CanAddTransaction() {
-        //given
-        Amount amount = new Amount("100.23", "USD", DebitCredit.CREDIT);
-        Transaction transaction = new Transaction(amount, "2226e2f9-ih09-46a8-958f-d659880asdfD", "55210c62-e480-asdf-bc1b-e991ac67FSAC", DebitCredit.CREDIT, LocalDateTime.now());
-        //when
-        int result = underTest.addTransaction(transaction);
-        //then
-        ArgumentCaptor<Transaction> transactionArgumentCaptor = ArgumentCaptor.forClass(Transaction.class);
-        verify(mockDB).add(transactionArgumentCaptor.capture());
-        Transaction capturedTransaction = transactionArgumentCaptor.getValue();
-        assertThat(capturedTransaction).isEqualTo(transaction);
-        assertEquals(1, result);
+    public void testAddTransaction() {
+        Transaction transaction = new Transaction();
+        Amount transactionAmount = new Amount();
+        transactionAmount.setAmount("100");
+        transactionAmount.setCurrency("USD");
+        transactionAmount.setDebitOrCredit(DebitCredit.CREDIT);
+        transaction.setTransactionAmount(transactionAmount);
+        transaction.setUserId("user123");
+        transaction.setMessageId("msg123");
+        transaction.setTransactionType(DebitCredit.CREDIT);
+        transaction.setTimestamp(LocalDateTime.now());
 
+        int result = eventSourcingDao.addTransaction(transaction);
+
+        ArgumentCaptor<Document> documentCaptor = ArgumentCaptor.forClass(Document.class);
+        verify(mockCollection, times(1)).insertOne(documentCaptor.capture());
+
+        Document capturedDocument = documentCaptor.getValue();
+        assertEquals("100", capturedDocument.get("Amount", Document.class).get("amount"));
+        assertEquals("USD", capturedDocument.get("Amount", Document.class).get("currency"));
+        assertEquals(DebitCredit.CREDIT, capturedDocument.get("Amount", Document.class).get("debitOrCredit"));
+        assertEquals("user123", capturedDocument.getString("userId"));
+        assertEquals("msg123", capturedDocument.getString("messageId"));
+        assertEquals(DebitCredit.CREDIT, capturedDocument.get("transactionType"));
+        assertEquals(result, 1);
     }
 }
